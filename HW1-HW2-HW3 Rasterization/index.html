@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Canvas窗口</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <canvas id="window" width="720" height="600"></canvas>
+    <div id="performance-info" style="position: absolute; top: 10px; left: 10px; background: rgba(0,0,0,0.7); color: white; padding: 10px; border-radius: 5px; font-family: monospace; font-size: 12px;"></div>
+    <script src="lib/gl-matrix.js"></script>
+    <script src="lib/webgl-obj-loader.js"></script>
+    <script src="data.js"></script>
+    <script src="window.js"></script>
+    <script>
+        console.log('PROGRAM START');
+        const canvas = document.getElementById('window');
+    
+        canvas.addEventListener('click', function(event) {
+            const rect = canvas.getBoundingClientRect();
+            const x = Math.floor(event.clientX - rect.left);
+            const y = Math.floor(event.clientY - rect.top);
+            
+            // 确保坐标在canvas范围内
+            if (x >= 0 && x < WDITH && y >= 0 && y < HEIGHT) {
+                console.log(`点击像素: (${x}, ${y})`);
+                // 在这里处理点击事件
+                handlePixelClick(x, y);
+            }
+        });
+        console.log('PROGRAM INITED');
+        function mainLoop(){
+            windowLoop();
+            requestAnimationFrame(mainLoop);
+        }
+        mainLoop();
+    </script>
+</body>
+</html>
