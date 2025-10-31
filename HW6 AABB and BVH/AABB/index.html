@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+body { margin: 0; background: #1a1a1a; }
+canvas { display: block; width: 100vw; height: 100vh; }
+</style>
+</head>
+<body>
+<canvas id="canvas"></canvas>
+<script src="main.js"></script>
+<script>
+const c = document.getElementById('canvas');
+const ctx = c.getContext('2d');
+let rect = { x: 0, y: 0, w: 0, h: 0 };
+let dragging = false;
+let dragOffset = { x: 0, y: 0 };
+let line = { p1: { x: 0, y: 0 }, p2: { x: 0, y: 0 } };
+let draggingPoint = null;
+
+function draw() {
+  ctx.clearRect(0, 0, c.width, c.height);
+  ctx.strokeStyle = rectColor;
+  ctx.lineWidth = 2;
+  ctx.strokeRect(rect.x, rect.y, rect.w, rect.h);
+  ctx.strokeStyle = '#00ff00';
+  ctx.beginPath();
+  ctx.moveTo(line.p1.x, line.p1.y);
+  ctx.lineTo(line.p2.x, line.p2.y);
+  ctx.stroke();
+  ctx.fillStyle = '#ffffff';
+  ctx.beginPath();
+  ctx.arc(line.p1.x, line.p1.y, 5, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = '#00ff00';
+  ctx.beginPath();
+  ctx.arc(line.p2.x, line.p2.y, 5, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+function resize() {
+  c.width = window.innerWidth;
+  c.height = window.innerHeight;
+  if (rect.w === 0) {
+    rect.w = c.width * 0.16;
+    rect.h = c.height * 0.16;
+    rect.x = (c.width - rect.w) / 2;
+    rect.y = (c.height - rect.h) / 2;
+  }
+  if (line.p2.x === 0) {
+    line.p1.x = c.width * 0.3;
+    line.p1.y = c.height * 0.3;
+    line.p2.x = c.width * 0.5;
+    line.p2.y = c.height * 0.5;
+  }
+  draw();
+}
+
+function isInside(x, y) {
+  return x >= rect.x && x <= rect.x + rect.w && y >= rect.y && y <= rect.y + rect.h;
+}
+
+function getPointDistance(px, py, x, y) {
+  return Math.sqrt((px - x) ** 2 + (py - y) ** 2);
+}
+
+c.addEventListener('mousedown', e => {
+  const x = e.offsetX, y = e.offsetY;
+  const d1 = getPointDistance(line.p1.x, line.p1.y, x, y);
+  const d2 = getPointDistance(line.p2.x, line.p2.y, x, y);
+  
+  if (d1 < 10) {
+    draggingPoint = 'p1';
+  } else if (d2 < 10) {
+    draggingPoint = 'p2';
+  } else if (isInside(x, y)) {
+    dragging = true;
+    dragOffset.x = x - rect.x;
+    dragOffset.y = y - rect.y;
+  }
+});
+
+c.addEventListener('mousemove', e => {
+  const x = e.offsetX, y = e.offsetY;
+  
+  if (draggingPoint === 'p1') {
+    line.p1.x = x;
+    line.p1.y = y;
+    draw();
+  } else if (draggingPoint === 'p2') {
+    line.p2.x = x;
+    line.p2.y = y;
+    draw();
+  } else if (dragging) {
+    rect.x = x - dragOffset.x;
+    rect.y = y - dragOffset.y;
+    draw();
+  }
+});
+
+c.addEventListener('mouseup', () => {
+  dragging = false;
+  draggingPoint = null;
+});
+
+resize();
+window.addEventListener('resize', resize);
+
+function loop(){
+    main();
+    requestAnimationFrame(loop);
+}
+loop();
+</script>
+</body>
+</html>
+
