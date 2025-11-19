@@ -2,6 +2,10 @@
 
 我完成的Games101的作业（等价的）
 
+没有使用GAMES101提供的框架代码 都是手搓的。
+
+在我github放这玩意会不会显得我很没有逼格？
+
 HW1-HW2-HW3 Javascript+Canvas软光栅化渲染器
 
 HW4 Javascript+Canvas贝塞尔曲线（德卡斯特里奥算法）
